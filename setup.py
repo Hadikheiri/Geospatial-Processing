@@ -3,12 +3,12 @@ from setuptools import setup, find_packages
 setup(
     name='atash',
     version='0.1.0',
-    author='Your Name',
-    author_email='your.email@example.com',
+    author='Bahman Amirsardary',
+    author_email='bahman.amirsardary@mail.polimi.it',
     description='A library for satellite image processing and fire analysis.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
-    url='https://github.com/yourusername/atash',  # Replace with your repository URL
+    url='https://github.com/Bahman75/Geospatial-Processing',  
     packages=find_packages(),
     install_requires=[
         'scipy',
