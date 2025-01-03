@@ -1,56 +1,234 @@
-# Fire Detection and Severity Classification using Remote Sensing Data
+# Atash: Fire Detection and Severity Classification using Remote Sensing Data
 
-## Overview
-This project aims to classify and detect fire-affected areas and assess the severity of fires using remote sensing data, including NDVI, NBR, and NDWI rasters. The project leverages machine learning techniques, particularly K-means clustering, to differentiate between burned and unburned areas, and classify the severity of fires into multiple categories based on post-fire satellite imagery.
+Atash is an open-source Python library designed for fire detection and burn severity classification using remote sensing data. It integrates with OpenEO to process Sentinel-2 imagery and generates detailed NDVI, NBR, and NDWI maps for analysis.
 
-## Contributors
-- **Bahman Amirsardary**
-- **Hadi Kheiri**
-- **Milad Ramezani Ziarani**
+## Table of Contents
 
-## Project Objective
-The main objective of this project is to:
-- Use satellite data (NDVI, NBR, NDWI) to detect fire-affected areas.
-- Classify fire severity into different categories using K-means clustering and threshold-based methods.
-- Calculate and visualize the area affected by fires and their respective severity levels.
+1. [Authentication Details](#authentication-details)
+2. [Features](#features)
+3. [File Structure](#file-structure)
+4. [Installation](#installation)
+5. [Configuration](#configuration)
+6. [Usage](#usage)
+7. [Input/Output Specifications](#inputoutput-specifications)
+8. [Function Documentation](#function-documentation)
+9. [Error Handling](#error-handling)
+10. [Performance Considerations](#performance-considerations)
+11. [Contributors and Support](#contributors-and-support)
+12. [License](#license)
+13. [Data Privacy Note](#data-privacy-note)
 
-## Technologies Used
-- **Python**: Programming language used for data analysis and processing.
-- **NumPy**: For numerical operations and handling raster data.
-- **Matplotlib**: For plotting maps and visualizing results.
-- **Rasterio**: For reading and processing raster data files.
-- **Scikit-learn**: For machine learning algorithms (K-means clustering and feature scaling).
-- **SimpleImputer**: For handling missing data in the input features.
+---
 
-## Dataset
-This project uses the following raster datasets:
-- **NDVI (Normalized Difference Vegetation Index)**: Measures vegetation health.
-- **NBR (Normalized Burn Ratio)**: A fire detection index used to assess burn severity.
-- **NDWI (Normalized Difference Water Index)**: Used to mask out water areas during fire classification.
+## 1. Authentication Details
 
-These datasets are typically provided by satellite imagery such as MODIS or Landsat and processed into raster files (`.tiff` format).
+To authenticate with OpenEO, you need OIDC credentials.
 
-## Project Workflow
-1. **Data Preprocessing**:
-   - Read the NDVI, NBR, and NDWI raster files.
-   - Apply water masking based on NDWI values to exclude water areas from analysis.
+1. Register at [Copernicus Data Space](https://dataspace.copernicus.eu) to obtain login credentials.
+2. Create a `secrets.yaml` file with the following contents:
+   ```yaml
+   openeo:
+     url: "https://openeo.dataspace.copernicus.eu"
+     authentication: "OIDC"
+   ```
+3. Ensure `secrets.yaml` is excluded from version control using `.gitignore`.
 
-2. **Feature Stacking**:
-   - Stack the NDVI, NBR, and other relevant features into a single array for clustering.
+---
 
-3. **Clustering with K-means**:
-   - Normalize the features.
-   - Apply K-means clustering to classify pixels into different severity classes.
+## 2. Features
 
-4. **Severity Classification**:
-   - Classify the fire severity into multiple classes using thresholds or clustering results.
-   - Generate a fire severity map and calculate the area affected by each severity class.
+- **OpenEO Integration**: Easily connect and authenticate using OIDC.
+- **NDVI, NBR, and NDWI Calculations**: Compute vegetation health, burn severity, and water indices.
+- **Fire Detection**: Detect fire-affected areas using NDVI and NBR differences.
+- **Severity Classification**: Classify burn severity using thresholds and KMeans clustering.
+  - **KMeans Clustering**: Groups pixels into clusters based on NDVI, NBR, and NDWI values to classify fire severity levels.
+- **Interactive ROI Selection**: Use an interactive map to define spatial extents.
+- **Water Masking**: Improve accuracy by excluding water bodies using NDWI.
 
-5. **Area Calculation**:
-   - Calculate and print the area of burned and unburned regions.
-   - Visualize the classified fire area map.
+---
 
+## 3. File Structure
 
-## Results
-The script generates a classification map showing different severity levels of fire-affected areas. It also calculates the area (in square kilometers) for each fire severity class and outputs the results.
+```
+atash/
+├── data/
+│   └── README.md (instructions for adding `.tiff` files)
+├── src/
+│   └── atash.py (library source code)
+├── requirements.txt (library dependencies)
+├── secrets.yaml (authentication credentials, ignored in `.gitignore`)
+└── README.md (project documentation)
+```
+
+---
+
+## 4. Installation
+
+### Prerequisites
+
+- Python 3.8+
+- Pip and Git
+
+### Steps
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/username/Atash.git
+   cd Atash
+   ```
+2. Create a virtual environment:
+   ```bash
+   python -m venv env
+   source env/bin/activate  # For Windows: env\\Scripts\\activate
+   ```
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+---
+
+## 5. Configuration
+
+### `secrets.yaml` Setup
+
+Ensure your `secrets.yaml` contains the required URL and authentication mode.
+
+---
+
+## 6. Usage
+
+### Complete Workflow Example
+
+```python
+from atash import connect_to_openeo, load_map, get_start_and_end_dates, load_pre_ndvi, load_post_ndvi, fire_detector_ndvi, severity_ndvi
+
+# Step 1: Connect to OpenEO
+connection = connect_to_openeo()
+
+# Step 2: Define area of interest
+map_interface = load_map()
+
+# Step 3: Set temporal extent
+start_date, end_date = get_start_and_end_dates()
+
+# Step 4: Process pre/post-event data
+load_pre_ndvi(connection, extent, start_date, end_date)
+load_post_ndvi(connection, extent, start_date, end_date)
+
+# Step 5: Analyze fire impact
+fire_detector_ndvi()
+severity_ndvi()
+```
+
+---
+
+## 7. Input/Output Specifications
+
+### Input Data:
+
+- **Format**: `.tiff` files for raster data.
+- **Required Bands**:
+  - B03 (Green), B04 (Red), B08 (NIR), B12 (SWIR).
+- **Coordinate Reference System (CRS)**: Input rasters must have the same CRS (e.g., `EPSG:4326`).
+- **Raster Resolution**: Assumed to be 10m x 10m.
+
+### File Naming Conventions:
+
+- Ensure consistent file naming:
+  - `NDVI_PRE.tiff` for pre-event NDVI.
+  - `NBR_PRE.tiff` for pre-event NBR.
+  - `NDWI.tiff` for water mask rasters.
+
+### Output Files:
+
+- ``: Pre-event NDVI raster.
+- ``: Post-event NDVI raster.
+- ``: Pre-event NBR raster.
+- ``: Post-event NBR raster.
+- ``: Water mask raster.
+
+---
+
+## 8. Function Documentation
+
+### API Reference Table
+
+| Function                    | Purpose                                   | Parameters                                 |
+| --------------------------- | ----------------------------------------- | ------------------------------------------ |
+| `connect_to_openeo()`       | Establishes OpenEO connection             | -                                          |
+| `load_map()`                | Displays an interactive map for ROI       | -                                          |
+| `get_start_and_end_dates()` | Captures start and end dates              | -                                          |
+| `load_pre_ndvi()`           | Loads pre-event NDVI data                 | `connection, extent, start_date, end_date` |
+| `load_post_ndvi()`          | Loads post-event NDVI data                | `connection, extent, start_date, end_date` |
+| `fire_detector_ndvi()`      | Detects fire-affected areas via NDVI      | -                                          |
+| `severity_ndvi()`           | Classifies fire severity (NDVI)           | -                                          |
+| `severity_kmeans()`         | Uses KMeans clustering for classification | -                                          |
+
+---
+
+## 9. Error Handling
+
+### Common Issues and Solutions
+
+1. **OpenEO Connection Error**:
+
+   - **Message**: "Failed to connect to OpenEO: [specific error]"
+   - **Solution**: Check OpenEO URL, credentials, and internet connection.
+
+2. **FileNotFoundError**:
+
+   - **Message**: "File not found: `NDVI_PRE.tiff`"
+   - **Solution**: Ensure the required `.tiff` files are present in the `data/` folder.
+
+3. **MemoryError**:
+
+   - **Message**: "Unable to allocate array"
+   - **Solution**: Reduce raster size or increase system memory.
+
+4. **Data Format Issue**:
+
+   - **Message**: "Invalid raster dimensions"
+   - **Solution**: Ensure input `.tiff` files have matching resolutions and CRS.
+
+5. **Median Filter Missing Dependency**:
+
+   - **Message**: "ModuleNotFoundError: No module named 'scipy'"
+   - **Solution**: Install `scipy` using `pip install scipy`.
+
+---
+
+## 10. Performance Considerations
+
+- **Processing Time**:
+  - Small ROI (<50 km²): \~5 minutes.
+  - Large ROI (>500 km²): \~30 minutes.
+- **System Requirements**:
+  - 8GB RAM (minimum).
+  - Multi-core CPU recommended.
+
+---
+
+## 11. Contributors and Support
+We extend our gratitude to the contributors of the "Atash" project. You can explore their profiles for more projects and collaborations:
+
+- **Bahman Amirsardary** – .
+- **Hadi Kheiri Gharajeh** – [hadi.kheiri@mail.polimi.it](mailto:hadi.kheiri@mail.polimi.it).
+- **Milad Ramezani Ziarani** – .
+
+For support or contributions, feel free to contact us.
+
+## 12. License
+
+This project is released under the MIT License.
+
+---
+
+## 13. Data Privacy Note
+
+Atash does not store or log user data. Any authentication or API usage is handled securely via OpenEO's OIDC protocol. Ensure you review OpenEO's privacy policy for their data handling practices.
+
+---
+
+Contributions are welcome! Feel free to open issues or submit pull requests.
 
