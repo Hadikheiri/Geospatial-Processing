@@ -139,7 +139,8 @@ severity_ndvi()
   - `NDVI_PRE.tiff` for pre-event NDVI.
   - `NBR_PRE.tiff` for pre-event NBR.
   - `NDWI.tiff` for water mask rasters.
-
+  - `NDVI_Post.tiff` for post-event NDVI.
+  - `NBR_Post.tiff` for post-event NBR.
 ### Output Files:
 
 - ``: Pre-event NDVI raster.
@@ -212,9 +213,9 @@ severity_ndvi()
 ## 11. Contributors and Support
 We extend our gratitude to the contributors of the "Atash" project. You can explore their profiles for more projects and collaborations:
 
-- **Bahman Amirsardary** – .
+- **Bahman Amirsardary** – [bahman.amirsardary@mail.polimi.it](mailto:bahman.amirsardary@mail.polimi.it).
 - **Hadi Kheiri Gharajeh** – [hadi.kheiri@mail.polimi.it](mailto:hadi.kheiri@mail.polimi.it).
-- **Milad Ramezani Ziarani** – .
+- **Milad Ramezani Ziarani** – [Milad.ramezani@mail.polimi.it](mailto:Milad.ramezani@mail.polimi.it).
 
 For support or contributions, feel free to contact us.
 
