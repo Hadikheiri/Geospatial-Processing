@@ -100,7 +100,7 @@ def load_map():
   m
 
 # Display the map
-  return m
+  return extent
 
 # Now you can access the 'extent' variable later in your code
 # For example, in another block you can access it like this:
