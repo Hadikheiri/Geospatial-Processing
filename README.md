@@ -70,9 +70,8 @@ atash/
 - Python 3.8+
 - Pip and Git
 
-### Steps
 
-1. Install with pip
+- Install with pip
    ```python
    !pip install atash
    ```
@@ -210,7 +209,7 @@ We extend our gratitude to the contributors of the "Atash" project. You can expl
 
 - **Bahman Amirsardary** – [bahman.amirsardary@mail.polimi.it](mailto:bahman.amirsardary@mail.polimi.it).
 - **Hadi Kheiri Gharajeh** – [hadi.kheiri@mail.polimi.it](mailto:hadi.kheiri@mail.polimi.it).
-- **Milad Ramezani Ziarani** – [Milad.ramezani@mail.polimi.it](mailto:Milad.ramezani@mail.polimi.it).
+- **Milad Ramezani Ziarani** – [milad.ramezani@mail.polimi.it](mailto:milad.ramezani@mail.polimi.it).
 
 For support or contributions, feel free to contact us.
 
