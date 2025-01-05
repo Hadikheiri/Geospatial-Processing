@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 
 setup(
     name='atash',
-    version='0.1.1',
-    authors='Bahman Amirsardary','Hadi Kheiri','Milad Ramezani Ziarani',
-    authors_email='bahman.amirsardary@mail.polimi.it','hadi.kheiri@mail.polimi.it','Milad.ramezani@mail.polimi.it',
+    version='0.1.3',
+    authors='Bahman Amirsardary, Hadi Kheiri, Milad Ramezani Ziarani',
+    authors_email='bahman.amirsardary@mail.polimi.it, hadi.kheiri@mail.polimi.it, Milad.ramezani@mail.polimi.it',
     description='A library for satellite image processing and fire analysis.',
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
