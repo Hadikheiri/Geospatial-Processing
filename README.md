@@ -25,13 +25,11 @@ Atash is an open-source Python library designed for fire detection and burn seve
 To authenticate with OpenEO, you need OIDC credentials.
 
 1. Register at [Copernicus Data Space](https://dataspace.copernicus.eu) to obtain login credentials.
-2. Create a `secrets.yaml` file with the following contents:
-   ```yaml
-   openeo:
-     url: "https://openeo.dataspace.copernicus.eu"
-     authentication: "OIDC"
+2. Create a connection with Copernicus API:
    ```
-3. Ensure `secrets.yaml` is excluded from version control using `.gitignore`.
+   openeo:
+     connection = connect_to_openeo()
+   ```
 
 ---
 
@@ -41,7 +39,7 @@ To authenticate with OpenEO, you need OIDC credentials.
 - **NDVI, NBR, and NDWI Calculations**: Compute vegetation health, burn severity, and water indices.
 - **Fire Detection**: Detect fire-affected areas using NDVI and NBR differences.
 - **Severity Classification**: Classify burn severity using thresholds and KMeans clustering.
-  - **KMeans Clustering**: Groups pixels into clusters based on NDVI, NBR, and NDWI values to classify fire severity levels.
+  - **KMeans Clustering**: Groups pixels into clusters based on NDVI and NBR values to classify fire severity levels.
 - **Interactive ROI Selection**: Use an interactive map to define spatial extents.
 - **Water Masking**: Improve accuracy by excluding water bodies using NDWI.
 
@@ -71,32 +69,17 @@ atash/
 
 ### Steps
 
-1. Clone the repository:
-   ```bash
-   git clone [https://github.com/Bahman75/Geospatial-Processing/edit/main]
-   cd Atash
+1. Install with pip
+   ```python
+   !pip install atash
    ```
-2. Create a virtual environment:
-   ```bash
-   python -m venv env
-   source env/bin/activate  # For Windows: env\\Scripts\\activate
-   ```
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+   
 
 ---
 
-## 5. Configuration
 
-### `secrets.yaml` Setup
 
-Ensure your `secrets.yaml` contains the required URL and authentication mode.
-
----
-
-## 6. Usage
+## 5. Usage
 
 ### Complete Workflow Example
 
@@ -123,11 +106,11 @@ severity_ndvi()
 
 ---
 
-## 7. Input/Output Specifications
+## 6. Input/Output Specifications
 
 ### Input Data:
 
-- **Format**: `.tiff` files for raster data.
+- **Format**: `.tiff` files for raster data from openeo.
 - **Required Bands**:
   - B03 (Green), B04 (Red), B08 (NIR), B12 (SWIR).
 - **Coordinate Reference System (CRS)**: Input rasters must have the same CRS (e.g., `EPSG:4326`).
@@ -141,19 +124,22 @@ severity_ndvi()
   - `NDWI.tiff` for water mask rasters.
   - `NDVI_Post.tiff` for post-event NDVI.
   - `NBR_Post.tiff` for post-event NBR.
-### Output Files:
+### Output Files and Results:
 
 - ``: Pre-event NDVI raster.
 - ``: Post-event NDVI raster.
 - ``: Pre-event NBR raster.
 - ``: Post-event NBR raster.
 - ``: Water mask raster.
-
+- ``: Wildfire Severity by NDVI and surface area of them.
+- ``: Wildfire Severity by NBR and surface area of them.
+- ``: Wildfire Severity by NDVI and NBR and surface area of them.
+- ``: K-Means Clustering of wildfire.
 ---
 
 ## 8. Function Documentation
 
-### API Reference Table
+### 
 
 | Function                    | Purpose                                   | Parameters                                 |
 | --------------------------- | ----------------------------------------- | ------------------------------------------ |
@@ -162,9 +148,15 @@ severity_ndvi()
 | `get_start_and_end_dates()` | Captures start and end dates              | -                                          |
 | `load_pre_ndvi()`           | Loads pre-event NDVI data                 | `connection, extent, start_date, end_date` |
 | `load_post_ndvi()`          | Loads post-event NDVI data                | `connection, extent, start_date, end_date` |
-| `fire_detector_ndvi()`      | Detects fire-affected areas via NDVI      | -                                          |
+| `load_pre_nbr()`            | Loads pre-event NBR data                  | `connection, extent, start_date, end_date` |
+| `load_post_nbr()`           | Loads post-event NBR data                 | `connection, extent, start_date, end_date` |
+| `fire_detector_nbr()`       | Detects fire-affected pixels via NBR      | -                                          |
+| `fire_area_nbr()`           | Detects fire-affected areas via NBR       | -                                          |
+| `fire_area_ndvi()`          | Detects fire-affected areas via NDVI      | -                                          |
 | `severity_ndvi()`           | Classifies fire severity (NDVI)           | -                                          |
+| `severity_nbr()`            | Uses KMeans clustering for classification | -                                          |
 | `severity_kmeans()`         | Uses KMeans clustering for classification | -                                          |
+
 
 ---
 
@@ -180,7 +172,7 @@ severity_ndvi()
 2. **FileNotFoundError**:
 
    - **Message**: "File not found: `NDVI_PRE.tiff`"
-   - **Solution**: Ensure the required `.tiff` files are present in the `data/` folder.
+   - **Solution**: Ensure the required `.tiff` files are present in the folder.
 
 3. **MemoryError**:
 
@@ -202,8 +194,8 @@ severity_ndvi()
 ## 10. Performance Considerations
 
 - **Processing Time**:
-  - Small ROI (<50 km²): \~5 minutes.
-  - Large ROI (>500 km²): \~30 minutes.
+  - Small ROI (<500 km²): \~15 minutes.
+  - Large ROI (>1000 km²): \~30 minutes.
 - **System Requirements**:
   - 8GB RAM (minimum).
   - Multi-core CPU recommended.
@@ -219,13 +211,11 @@ We extend our gratitude to the contributors of the "Atash" project. You can expl
 
 For support or contributions, feel free to contact us.
 
-## 12. License
 
-This project is released under the MIT License.
 
 ---
 
-## 13. Data Privacy Note
+## 12. Data Privacy Note
 
 Atash does not store or log user data. Any authentication or API usage is handled securely via OpenEO's OIDC protocol. Ensure you review OpenEO's privacy policy for their data handling practices.
 
