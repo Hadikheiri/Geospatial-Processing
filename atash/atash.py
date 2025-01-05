@@ -15,7 +15,7 @@ import matplotlib.colors as mcolors
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
-
+from scipy.ndimage import median_filter
 
 
 # your_library/api_connection.py
@@ -389,7 +389,7 @@ def fire_area_ndvi():
   iterations = 1  # Number of iterations (for further refinement)
 
   # Open the pre-fire and post-fire NDVI raster files and the NDWI raster
-  with rasterio.open("NDVI_PRE.tiff") as src_pre, rasterio.open("NDVI_Post.tiff") as src_post, rasterio.open("NDWI.tiff") as src_ndwi:
+  with rasterio.open("NDVI_PRE.tiff") as src_pre, rasterio.open("Post_NDVI.tiff") as src_post, rasterio.open("NDWI.tiff") as src_ndwi:
       # Read the data as numpy arrays (assuming single band)
       ndvi_pre = src_pre.read(1)
       ndvi_post = src_post.read(1)
@@ -451,7 +451,7 @@ def severity_ndvi():
 
 
   # Open pre-fire and post-fire NDVI rasters
-  with rasterio.open("NDVI_PRE.tiff") as src_pre, rasterio.open("NDVI_Post.tiff") as src_post:
+  with rasterio.open("NDVI_PRE.tiff") as src_pre, rasterio.open("Post_NDVI.tiff") as src_post:
       ndvi_pre = src_pre.read(1)
       ndvi_post = src_post.read(1)
       transform = src_pre.transform  # Save transform for plotting
@@ -710,7 +710,7 @@ def severity_kmeans():
   with rasterio.open("NDWI.tiff") as src_ndwi:
       ndwi = src_ndwi.read(1)  # NDWI raster (used for water masking)
 
-  with rasterio.open("NDVI_Post.tiff") as src_post:
+  with rasterio.open("Post_NDVI.tiff") as src_post:
       ndvi_post = src_post.read(1)  # Post-fire NDVI
 
   with rasterio.open("NBR_Post.tiff") as src_post:
