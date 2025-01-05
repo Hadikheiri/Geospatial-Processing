@@ -73,7 +73,7 @@ atash/
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/username/Atash.git
+   git clone [https://github.com/Bahman75/Geospatial-Processing/edit/main]
    cd Atash
    ```
 2. Create a virtual environment:
