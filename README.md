@@ -67,7 +67,7 @@ atash/
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.6+
 - Pip and Git
 
 
