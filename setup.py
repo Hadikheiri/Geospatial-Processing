@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='atash',
-    version='0.1.6',
+    version='0.1.7',
     authors='Bahman Amirsardary, Hadi Kheiri, Milad Ramezani Ziarani',
     authors_email='bahman.amirsardary@mail.polimi.it, hadi.kheiri@mail.polimi.it, Milad.ramezani@mail.polimi.it',
     description='A library for satellite image processing and fire analysis.',
