@@ -52,13 +52,13 @@ To authenticate with OpenEO, you need OIDC credentials.
 
 ```
 atash/
-├── data/
-│   └── README.md (instructions for adding `.tiff` files)
-├── src/
-│   └── atash.py (library source code)
-├── requirements.txt (library dependencies)
-├── secrets.yaml (authentication credentials, ignored in `.gitignore`)
-└── README.md (project documentation)
+├── __init__.py          # Package initialization file
+├── atash.py             # Library source code for fire detection and classification
+.DS_Store                # System file (should be added to .gitignore)
+README.md                # Project documentation
+setup.py                 # Script for library installation
+test.ipynb               # Jupyter notebook for testing and demonstration
+
 ```
 
 ---
