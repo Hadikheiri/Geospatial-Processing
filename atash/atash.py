@@ -480,7 +480,7 @@ def severity_ndvi():
       for j in range(fire_ndvi.shape[1]):
           if not np.isnan(fire_ndvi[i, j]):  # Only classify non-water areas
               severity_map_mosaic[i, j] = classify_burn_severity_ndvi(fire_ndvi[i, j])
-
+  fire_ndvi.download("NDVI_Final.tiff")
   # Plot the severity map
   f, ax = plt.subplots(1, 1, dpi=100, figsize=(12, 6))
   show(
@@ -568,6 +568,7 @@ def severity_nbr():
   values = ["Unburned", "Low Severity", "Moderate Severity", "Moderate High Severity", "High Severity"]
 
   # Create a severity map based on the classification function
+  final_fire_NBR.download("NBR_Final.tiff")
   severity_map_nbr = np.zeros_like(final_fire_NBR, dtype=int)
   for i in range(final_fire_NBR.shape[0]):
       for j in range(final_fire_NBR.shape[1]):
@@ -632,7 +633,14 @@ def fire_severity_multiclass():
   with rasterio.open("NDWI.tiff") as src_pre:
       # Read the NDWI data as a numpy array
       ndwi = src_pre.read(1)
+  with rasterio.open("NBR_PRE.tiff") as src_pre, rasterio.open("NBR_Post.tiff") as src_post, rasterio.open("NBR_Final.tiff") as src_nbr, resterio.open("NDVI_Final.tiff") as src_ndvi:
+      NBR_Pre = src_pre.read(1)
+      NBR_Post = src_post.read(1)
+      final_fire_nbr = src_nbr.read(1)
+      final_fire_ndvi = src_ndvi.read(1)
+      transform = src_pre.transform  # Save transform for plotting
 
+    
   # Function to classify fire-affected areas into five classes
   def classify_fire_area_multi(nbr_post, ndvi_post, final_fire_ndvi, final_fire_nbr, ndwi):
       if ndwi > 0.0:  # Water areas are excluded
@@ -715,6 +723,12 @@ def severity_kmeans():
 
   with rasterio.open("NBR_Post.tiff") as src_post:
       nbr_post = src_post.read(1)  # Post-fire NBR
+      
+  with rasterio.open("NBR_Final.tiff") as src_nbr:
+      final_fire_NBR = src_nbr.read(1)  
+      
+  with rasterio.open("NDVI_Final.tiff") as src_ndvi:
+      final_fire_NDVI = src_ndvi.read(1)  
 
   # Assuming `final_fire_ndvi` and `final_fire_nbr` are computed beforehand
   # (Post-fire NDVI difference and NBR difference)
