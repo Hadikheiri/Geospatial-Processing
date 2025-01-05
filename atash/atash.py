@@ -674,7 +674,7 @@ def fire_severity_multiclass():
       final_fire_ndvi = median_filter(fire_ndvi, size=kernel_size)
 
   # Function to classify fire-affected areas into five classes
-  def classify_fire_area_multi(nbr_post, ndvi_post, final_fire_ndvi, final_fire_nbr, ndwi):
+  def classify_fire_area_multi(NBR_post, ndvi_post, final_fire_ndvi, final_fire_nbr, ndwi):
       if ndwi > 0.0:  # Water areas are excluded
           return 0  # Unaffected Area (Water)
       elif final_fire_nbr > 0.7 or (final_fire_ndvi > 0.50 and NBR_post < 0.1 and ndvi_post < 0.0):
@@ -700,7 +700,7 @@ def fire_severity_multiclass():
   for i in range(rows):
       for j in range(cols):
           fire_area_map_multi[i, j] = classify_fire_area_multi(
-              nbr_post[i, j], ndvi_post[i, j], final_fire_ndvi[i, j], final_fire_NBR[i, j], ndwi[i, j]
+              NBR_post[i, j], ndvi_post[i, j], final_fire_ndvi[i, j], final_fire_NBR[i, j], ndwi[i, j]
           )
 
   # Plot the classified fire area map
@@ -797,13 +797,12 @@ def severity_kmeans():
   for _ in range(iterations):
       final_fire_ndvi = median_filter(fire_ndvi, size=kernel_size)
 
-  # Assuming `final_fire_ndvi` and `final_fire_nbr` are computed beforehand
-  # (Post-fire NDVI difference and NBR difference)
+  
   final_fire_ndvi = final_fire_NDVI  # Already available
   final_fire_nbr = final_fire_NBR   # Already available
 
   # Stack the features (NDVI, NBR, NDWI, and Post-fire data) into one array for K-means clustering
-  features = np.stack([final_fire_ndvi.flatten(), final_fire_nbr.flatten(), nbr_post.flatten(), ndvi_post.flatten()], axis=-1)
+  features = np.stack([final_fire_ndvi.flatten(), final_fire_NBR.flatten(), nbr_post.flatten(), ndvi_post.flatten()], axis=-1)
 
   # Impute NaN values with the mean of each feature
   imputer = SimpleImputer(strategy='mean')  # Create an imputer object
