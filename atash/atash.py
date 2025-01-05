@@ -674,16 +674,16 @@ def fire_severity_multiclass():
       final_fire_ndvi = median_filter(fire_ndvi, size=kernel_size)
 
   # Function to classify fire-affected areas into five classes
-  def classify_fire_area_multi(NBR_post, ndvi_post, final_fire_ndvi, final_fire_nbr, ndwi):
+  def classify_fire_area_multi(NBR_Post, ndvi_post, final_fire_ndvi, final_fire_nbr, ndwi):
       if ndwi > 0.0:  # Water areas are excluded
           return 0  # Unaffected Area (Water)
-      elif final_fire_nbr > 0.7 or (final_fire_ndvi > 0.50 and NBR_post < 0.1 and ndvi_post < 0.0):
+      elif final_fire_nbr > 0.7 or (final_fire_ndvi > 0.50 and NBR_Post < 0.1 and ndvi_post < 0.0):
           return 4  # Very High Severity Fire
-      elif final_fire_nbr > 0.5 or (final_fire_ndvi > 0.40 and NBR_post < 0.2 and ndvi_post < 0.05):
+      elif final_fire_nbr > 0.5 or (final_fire_ndvi > 0.40 and NBR_Post < 0.2 and ndvi_post < 0.05):
           return 3  # High Severity Fire
-      elif final_fire_nbr > 0.3 or (final_fire_ndvi > 0.30 and NBR_post < 0.25 and ndvi_post < 0.10):
+      elif final_fire_nbr > 0.3 or (final_fire_ndvi > 0.30 and NBR_Post < 0.25 and ndvi_post < 0.10):
           return 2  # Moderate Severity Fire
-      elif final_fire_nbr > 0.25 or (final_fire_ndvi > 0.20 and NBR_post < 0.3 and ndvi_post < 0.15):
+      elif final_fire_nbr > 0.25 or (final_fire_ndvi > 0.20 and NBR_Post < 0.3 and ndvi_post < 0.15):
           return 1  # Low Severity Fire
       else:
           return 0  # Unaffected Area
@@ -700,7 +700,7 @@ def fire_severity_multiclass():
   for i in range(rows):
       for j in range(cols):
           fire_area_map_multi[i, j] = classify_fire_area_multi(
-              NBR_post[i, j], ndvi_post[i, j], final_fire_ndvi[i, j], final_fire_NBR[i, j], ndwi[i, j]
+              NBR_Post[i, j], ndvi_post[i, j], final_fire_ndvi[i, j], final_fire_NBR[i, j], ndwi[i, j]
           )
 
   # Plot the classified fire area map
