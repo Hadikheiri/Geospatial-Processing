@@ -795,14 +795,14 @@ def severity_kmeans():
 
   # Apply median filter to smooth the NDVI difference (fire_ndvi)
   for _ in range(iterations):
-      final_fire_ndvi = median_filter(fire_ndvi, size=kernel_size)
+      final_fire_NDVI = median_filter(fire_ndvi, size=kernel_size)
 
   
   final_fire_ndvi = final_fire_NDVI  # Already available
   final_fire_nbr = final_fire_NBR   # Already available
 
   # Stack the features (NDVI, NBR, NDWI, and Post-fire data) into one array for K-means clustering
-  features = np.stack([final_fire_ndvi.flatten(), final_fire_NBR.flatten(), nbr_post.flatten(), ndvi_post.flatten()], axis=-1)
+  features = np.stack([final_fire_ndvi.flatten(), final_fire_nbr.flatten(), nbr_post.flatten(), ndvi_post.flatten()], axis=-1)
 
   # Impute NaN values with the mean of each feature
   imputer = SimpleImputer(strategy='mean')  # Create an imputer object
