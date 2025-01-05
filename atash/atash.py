@@ -642,11 +642,6 @@ def fire_severity_multiclass():
   kernel_size = 3  # Size of the neighborhood (adjust as needed)
   iterations = 1  # Number of times to apply the filter (adjust as needed)
 
-# Open pre-fire and post-fire NBR rasters
-  with rasterio.open("NBR_PRE.tiff") as src_pre, rasterio.open("NBR_Post.tiff") as src_post:
-      NBR_Pre = src_pre.read(1)
-      NBR_Post = src_post.read(1)
-      transform = src_pre.transform  # Save transform for plotting
 
   # Calculate the difference (Post - Pre)
   final_fire_NBR = NBR_Pre - NBR_Post
@@ -682,13 +677,13 @@ def fire_severity_multiclass():
   def classify_fire_area_multi(nbr_post, ndvi_post, final_fire_ndvi, final_fire_nbr, ndwi):
       if ndwi > 0.0:  # Water areas are excluded
           return 0  # Unaffected Area (Water)
-      elif final_fire_nbr > 0.7 or (final_fire_ndvi > 0.50 and nbr_post < 0.1 and ndvi_post < 0.0):
+      elif final_fire_nbr > 0.7 or (final_fire_ndvi > 0.50 and NBR_post < 0.1 and ndvi_post < 0.0):
           return 4  # Very High Severity Fire
-      elif final_fire_nbr > 0.5 or (final_fire_ndvi > 0.40 and nbr_post < 0.2 and ndvi_post < 0.05):
+      elif final_fire_nbr > 0.5 or (final_fire_ndvi > 0.40 and NBR_post < 0.2 and ndvi_post < 0.05):
           return 3  # High Severity Fire
-      elif final_fire_nbr > 0.3 or (final_fire_ndvi > 0.30 and nbr_post < 0.25 and ndvi_post < 0.10):
+      elif final_fire_nbr > 0.3 or (final_fire_ndvi > 0.30 and NBR_post < 0.25 and ndvi_post < 0.10):
           return 2  # Moderate Severity Fire
-      elif final_fire_nbr > 0.25 or (final_fire_ndvi > 0.20 and nbr_post < 0.3 and ndvi_post < 0.15):
+      elif final_fire_nbr > 0.25 or (final_fire_ndvi > 0.20 and NBR_post < 0.3 and ndvi_post < 0.15):
           return 1  # Low Severity Fire
       else:
           return 0  # Unaffected Area
@@ -761,23 +756,19 @@ def severity_kmeans():
   with rasterio.open("NBR_Post.tiff") as src_post:
       nbr_post = src_post.read(1)  # Post-fire NBR
       
-  with rasterio.open("NBR_Final.tiff") as src_nbr:
-      final_fire_NBR = src_nbr.read(1)  
-      
-  with rasterio.open("NDVI_Final.tiff") as src_ndvi:
-      final_fire_NDVI = src_ndvi.read(1)  
+
       # Define parameters for the median filter
   kernel_size = 3  # Size of the neighborhood (adjust as needed)
   iterations = 1  # Number of times to apply the filter (adjust as needed)
 
 # Open pre-fire and post-fire NBR rasters
-  with rasterio.open("NBR_PRE.tiff") as src_pre, rasterio.open("NBR_Post.tiff") as src_post:
-      NBR_Pre = src_pre.read(1)
-      NBR_Post = src_post.read(1)
+  with rasterio.open("NBR_PRE.tiff") as src_pre:
+      nbr_pre = src_pre.read(1)
+      
       transform = src_pre.transform  # Save transform for plotting
 
   # Calculate the difference (Post - Pre)
-  final_fire_NBR = NBR_Pre - NBR_Post
+  final_fire_NBR = nbr_pre - nbr_post
 
 
 
