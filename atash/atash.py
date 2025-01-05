@@ -16,6 +16,10 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 from scipy.ndimage import median_filter
+  
+  
+  
+ 
 
 
 # your_library/api_connection.py
@@ -247,8 +251,7 @@ def load_pre_nbr(connection, extent, start_date, end_date):
   # Reduce the collection to a max composite
   s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
 
-  # Calculate NDVI
-  ndvi_pre = s2pre_max.ndvi()
+
 
   # Calculate NDWI (Normalized Difference Water Index)
   green = s2pre_max.band("B03")  # Green band
@@ -265,9 +268,9 @@ def load_pre_nbr(connection, extent, start_date, end_date):
 
 
   # Calculate NBR (Normalized Burn Ratio)
-  NIR  = s2pre_max.band("B08")  # Near-Infrared
+  
   SWIR  = s2pre_max.band("B12")  # Short-Wave Infrared
-  NBR_Pre = (NIR - SWIR) / (NIR + SWIR)  # NBR formula: (NIR - SWIR) / (NIR + SWIR)
+  NBR_Pre = (nir - SWIR) / (nir + SWIR)  # NBR formula: (NIR - SWIR) / (NIR + SWIR)
 
   NBR_Pre.download("NBR_PRE.tiff")
   ndwi.download("NDWI.tiff")
@@ -282,8 +285,6 @@ def post_nbr(connection, extent, start_date, end_date):
       bands=["B03","B04","B08","B12"],
       max_cloud_cover=10,
   )
-  # calculate ndvi
-  ndvi_post = s2post.ndvi()
 
   # Calculate NBR (Normalized Burn Ratio)
   NIR  = s2post.band("B08")  # Near-Infrared
@@ -622,12 +623,7 @@ def severity_nbr():
 
 
 def fire_severity_multiclass():
-  import numpy as np
-  import matplotlib.colors as mcolors
-  import matplotlib.patches as mpatches
-  import rasterio
-  from rasterio.plot import show
-  import matplotlib.pyplot as plt
+
 
   # Open the pre-fire and post-fire NBR raster files (assuming single-band rasters)
   with rasterio.open("NDWI.tiff") as src_pre:
@@ -801,7 +797,7 @@ def severity_kmeans():
   final_fire_ndvi = final_fire_NDVI  # Already available
   final_fire_nbr = final_fire_NBR   # Already available
 
-  # Stack the features (NDVI, NBR, NDWI, and Post-fire data) into one array for K-means clustering
+  # Stack the features (NDVI, NBR, and Post-fire data) into one array for K-means clustering
   features = np.stack([final_fire_ndvi.flatten(), final_fire_nbr.flatten(), nbr_post.flatten(), ndvi_post.flatten()], axis=-1)
 
   # Impute NaN values with the mean of each feature
