@@ -493,8 +493,8 @@ def fire_area_ndvi():
         # Read raster data into numpy arrays
         ndvi_pre = src_pre.read(1)   # Pre-fire NDVI
         ndvi_post = src_post.read(1)  # Post-fire NDVI
-        ndwi = src_ndwi.read(1)       # Water index
-
+        NDWI = src_ndwi.read(1)         # Water index
+             
         # Calculate NDVI difference (positive values indicate vegetation loss)
         final_fire_NDVI = ndvi_pre - ndvi_post
 
@@ -510,7 +510,7 @@ def fire_area_ndvi():
     # Create fire detection mask:
     # - Filtered NDVI difference > 0.10 indicates potential burned areas
     # - ndwi <= 0 excludes water bodies
-    fire_condition = (filtered_fire_condition > 0.10) & (ndwi <= 0)
+    fire_condition = (filtered_fire_condition > 0.10) & (NDWI <= 0)
 
     # Create visualization
     f, ax = plt.subplots(1, 1, dpi=100, figsize=(12, 6))
