@@ -29,7 +29,6 @@ from scipy.ndimage import median_filter  # For noise reduction in images
 def connect_to_openeo():
     """
     Establish a connection to the OpenEO API and authenticate.
-
     Returns:
         openeo.Connection: An authenticated connection object.
     """
