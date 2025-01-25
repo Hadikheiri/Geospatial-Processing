@@ -493,7 +493,7 @@ def fire_area_ndvi():
         # Read raster data into numpy arrays
         ndvi_pre = src_pre.read(1)   # Pre-fire NDVI
         ndvi_post = src_post.read(1)  # Post-fire NDVI
-        ndwi = src_pre.read(1)         # Water index
+        ndwi = src_ndwi.read(1)         # Water index
              
         # Calculate NDVI difference (positive values indicate vegetation loss)
         final_fire_NDVI = ndvi_pre - ndvi_post
