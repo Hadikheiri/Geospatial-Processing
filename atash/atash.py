@@ -44,7 +44,6 @@ def connect_to_openeo():
 def load_map():
     """
     Creates and configures an interactive map with drawing capabilities.
-    
     Returns:
         Map: An ipyleaflet Map object with drawing controls
     """
@@ -83,7 +82,6 @@ def load_map():
     def handle_draw(self, action, geo_json):
         """
         Callback function to process drawn rectangles and extract their coordinates
-        
         Args:
             action: The drawing action performed
             geo_json: The geometry data of the drawn shape
