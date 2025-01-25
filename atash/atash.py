@@ -859,7 +859,7 @@ def fire_severity_multiclass():
     patches = [mpatches.Patch(color=cmap(i), label=labels[i]) for i in range(len(labels))]
     f.legend(handles=patches, bbox_to_anchor=(0.95, 0.2), loc=1)
 
-    # Calculate the area (in km²) for each severity class
+    # Calculate the area (in km²) for each severity classs
     class_areas = {}
     pixel_area_km2 = (10 * 10) / 1_000_000  # Assuming 10 m resolution
     for class_value in range(5):  # Classes 0 to 4
