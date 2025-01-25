@@ -199,7 +199,7 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
         "SENTINEL2_L2A",
         temporal_extent=["2022-04-01", "2022-08-30"],
         spatial_extent=extent,
-        bands=["B03","B04", "B08", "B12"],  # Bands needed for NDVI calculation
+        bands=["B04", "B08"],  # Bands needed for NDVI calculation
         max_cloud_cover=10,
     )
 
@@ -245,7 +245,7 @@ def load_post_ndvi(connection, extent, start_date, end_date):
         "SENTINEL2_L2A",
         temporal_extent=[start_date, final_date],
         spatial_extent=extent,
-        bands=["B04", "B08", "B12"],
+        bands=["B04", "B08"],
         max_cloud_cover=10,
     )
     
