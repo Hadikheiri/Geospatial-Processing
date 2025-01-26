@@ -490,12 +490,21 @@ def fire_area_nbr():
     plt.tight_layout()
     plt.show()
 
+import os
+import rasterio
+from scipy.ndimage import median_filter
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+import matplotlib.colors as mcolors
+
 def fire_area_ndvi(connection, extent, start_date, end_date):
     """
     Detects and visualizes fire-affected areas using NDVI (Normalized Difference Vegetation Index) difference.
     Applies median filtering to reduce noise and excludes water bodies using NDWI.
     """
-    if not os.path.exists("NDWI.tiff"):
+    ndwi_path = os.path.abspath("NDWI.tiff")
+    
+    if not os.path.exists(ndwi_path):
         print("NDWI.tiff not found. Generating NDWI...")
 
         # Load Sentinel-2 data and calculate NDWI
@@ -510,8 +519,12 @@ def fire_area_ndvi(connection, extent, start_date, end_date):
         green = s2pre_max.band("B03")
         nir = s2pre_max.band("B08")
         ndwi = (green - nir) / (green + nir)
-        ndwi.download("NDWI.tiff")
-        print("NDWI.tiff created.")
+        ndwi.download(ndwi_path)
+        
+        if os.path.exists(ndwi_path):
+            print("NDWI.tiff successfully created.")
+        else:
+            raise FileNotFoundError("Failed to create NDWI.tiff.")
 
     # Ensure NDVI_PRE and Post_NDVI files exist
     if not os.path.exists("NDVI_PRE.tiff") or not os.path.exists("Post_NDVI.tiff"):
@@ -524,7 +537,7 @@ def fire_area_ndvi(connection, extent, start_date, end_date):
     # Load all required raster data using context managers
     with rasterio.open("NDVI_PRE.tiff") as src_pre, \
          rasterio.open("Post_NDVI.tiff") as src_post, \
-         rasterio.open("NDWI.tiff") as src_ndwi:
+         rasterio.open(ndwi_path) as src_ndwi:
 
         # Read raster data into numpy arrays
         ndvi_pre = src_pre.read(1)   # Pre-fire NDVI
@@ -572,6 +585,7 @@ def fire_area_ndvi(connection, extent, start_date, end_date):
     plt.tight_layout()
     plt.show()
 
+    
 def severity_ndvi():
     """
     Analyzes and visualizes fire severity using NDVI (Normalized Difference Vegetation Index).
