@@ -29,7 +29,6 @@ from scipy.ndimage import median_filter  # For noise reduction in images
 def connect_to_openeo():
     """
     Establish a connection to the OpenEO API and authenticate.
-
     Returns:
         openeo.Connection: An authenticated connection object.
     """
@@ -45,7 +44,6 @@ def connect_to_openeo():
 def load_map():
     """
     Creates and configures an interactive map with drawing capabilities.
-    
     Returns:
         Map: An ipyleaflet Map object with drawing controls
     """
@@ -84,7 +82,6 @@ def load_map():
     def handle_draw(self, action, geo_json):
         """
         Callback function to process drawn rectangles and extract their coordinates
-        
         Args:
             action: The drawing action performed
             geo_json: The geometry data of the drawn shape
@@ -202,7 +199,7 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
         "SENTINEL2_L2A",
         temporal_extent=["2022-04-01", "2022-08-30"],
         spatial_extent=extent,
-        bands=["B03","B04", "B08", "B12"],  # Bands needed for NDVI calculation
+        bands=["B04", "B08"],  # Bands needed for NDVI calculation
         max_cloud_cover=10,
     )
 
@@ -248,7 +245,7 @@ def load_post_ndvi(connection, extent, start_date, end_date):
         "SENTINEL2_L2A",
         temporal_extent=[start_date, final_date],
         spatial_extent=extent,
-        bands=["B04", "B08", "B12"],
+        bands=["B04", "B08"],
         max_cloud_cover=10,
     )
     
@@ -316,7 +313,7 @@ def load_pre_nbr(connection, extent, start_date, end_date):
         "SENTINEL2_L2A",
         temporal_extent=["2022-04-01", "2022-08-30"],
         spatial_extent=extent,
-        bands=["B03","B04","B08","B12"],  # Bands needed for NBR and NDWI
+        bands=["B03","B08","B12"],  # Bands needed for NBR and NDWI
         max_cloud_cover=10,
     )
 
@@ -362,7 +359,7 @@ def post_nbr(connection, extent, start_date, end_date):
         "SENTINEL2_L2A",
         temporal_extent=[start_date, final_date],
         spatial_extent=extent,
-        bands=["B03","B04","B08","B12"],
+        bands=["B08","B12"],
         max_cloud_cover=10,
     )
 
@@ -496,8 +493,8 @@ def fire_area_ndvi():
         # Read raster data into numpy arrays
         ndvi_pre = src_pre.read(1)   # Pre-fire NDVI
         ndvi_post = src_post.read(1)  # Post-fire NDVI
-        ndwi = src_ndwi.read(1)       # Water index
-
+        ndwi = src_ndwi.read(1)         # Water index
+             
         # Calculate NDVI difference (positive values indicate vegetation loss)
         final_fire_NDVI = ndvi_pre - ndvi_post
 
@@ -859,7 +856,7 @@ def fire_severity_multiclass():
     patches = [mpatches.Patch(color=cmap(i), label=labels[i]) for i in range(len(labels))]
     f.legend(handles=patches, bbox_to_anchor=(0.95, 0.2), loc=1)
 
-    # Calculate the area (in km²) for each severity class
+    # Calculate the area (in km²) for each severity classs
     class_areas = {}
     pixel_area_km2 = (10 * 10) / 1_000_000  # Assuming 10 m resolution
     for class_value in range(5):  # Classes 0 to 4
