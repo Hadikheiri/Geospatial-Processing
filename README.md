@@ -54,7 +54,6 @@ To authenticate with OpenEO, you need OIDC credentials.
 atash/
 ├── __init__.py          # Package initialization file
 ├── atash.py             # Library source code for fire detection and classification
-.DS_Store                # System file (should be added to .gitignore)
 README.md                # Project documentation
 setup.py                 # Script for library installation
 test.ipynb               # Jupyter notebook for testing and demonstration
@@ -169,7 +168,7 @@ severity_ndvi()
 1. **OpenEO Connection Error**:
 
    - **Message**: "Failed to connect to OpenEO: [specific error]"
-   - **Solution**: Check OpenEO URL, credentials, and internet connection.
+   - **Solution**: Check the OpenEO URL, credentials, and internet connection.
 
 2. **FileNotFoundError**:
 

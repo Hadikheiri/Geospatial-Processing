@@ -353,7 +353,7 @@ def load_pre_nbr(connection, extent, start_date, end_date):
     nbr_pre = (nir - swir) / (nir + swir)
 
     # Save NBR to file
-    nbr_pre.download("NBR_PRE.tiff")
+    nbr_pre.download("NBR_PRE.tiff")       
 
 def post_nbr(connection, extent, start_date, end_date):
     """
@@ -571,7 +571,6 @@ def fire_area_ndvi(connection, extent, start_date, end_date):
     f.legend(handles=patches, bbox_to_anchor=(0.95, 0.2), loc=1)
     plt.tight_layout()
     plt.show()
-
 
 def severity_ndvi():
     """
