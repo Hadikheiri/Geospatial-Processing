@@ -308,52 +308,41 @@ def load_pre_nbr(connection, extent, start_date, end_date):
         start_date: Start of the time period
         end_date: End of the time period
     """
-    # Check if NDWI.tiff already exists
-    if not os.path.exists("NDWI.tiff"):
-        print("NDWI.tiff not found. Generating NDWI...")
+  # Load Sentinel-2 pre-collection
+  s2pre = connection.load_collection(
+      "SENTINEL2_L2A",
+      temporal_extent=["2022-04-01", "2022-08-30"],
+      spatial_extent=extent,
+      bands=["B03","B08","B12"],
+      max_cloud_cover=10,
+  )
 
-        # Load Sentinel-2 data with required bands
-        s2pre = connection.load_collection(
-            "SENTINEL2_L2A",
-            temporal_extent=[start_date, end_date],
-            spatial_extent=extent,
-            bands=["B03", "B08", "B12"],  # Bands needed for NDWI and NBR calculations
-            max_cloud_cover=10,
-        )
+  # Reduce the collection to a max composite
+  s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
 
-        # Create temporal composite using maximum values
-        s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
 
-        # Calculate NDWI using Green (B03) and NIR (B08) bands
-        green = s2pre_max.band("B03")
-        nir = s2pre_max.band("B08")
-        ndwi = (green - nir) / (green + nir)
+  # Calculate NDWI (Normalized Difference Water Index)
+  green = s2pre_max.band("B03")  # Green band
+  nir = s2pre_max.band("B08")  # Near Infrared (NIR) band
+  ndwi = (green - nir) / (green + nir)  # NDWI formula: (Green - NIR) / (Green + NIR)
 
-        # Save NDWI to file
-        ndwi.download("NDWI.tiff")
-        print("NDWI.tiff created.")
-    else:
-        print("NDWI.tiff already exists. Skipping NDWI generation.")
+  # Apply a threshold to detect water areas (NDWI > 0.2 indicates water)
+  threshold = 0.0
+  water_mask = ndwi > threshold  # Mask for water areas where NDWI > 0.2
 
-    # Load Sentinel-2 data again for NBR calculation
-    s2pre = connection.load_collection(
-        "SENTINEL2_L2A",
-        temporal_extent=[start_date, end_date],
-        spatial_extent=extent,
-        bands=["B08", "B12"],  # Bands needed for NBR calculation
-        max_cloud_cover=10,
-    )
+  ######################## Mask NDVI: Remove areas where NDWI is greater than the threshold (i.e., water)
+  #######################ndvi_pr = ndvi_pre.mask(~water_mask)  # Mask out water areas from NDVI (invert the water mask)
 
-    # Create temporal composite using maximum values
-    s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
 
-    # Calculate NBR using NIR (B08) and SWIR (B12) bands
-    nir = s2pre_max.band("B08")
-    swir = s2pre_max.band("B12")
-    nbr_pre = (nir - swir) / (nir + swir)
 
-    # Save NBR to file
-    nbr_pre.download("NBR_PRE.tiff")       
+  # Calculate NBR (Normalized Burn Ratio)
+  
+  SWIR  = s2pre_max.band("B12")  # Short-Wave Infrared
+  NBR_Pre = (nir - SWIR) / (nir + SWIR)  # NBR formula: (NIR - SWIR) / (NIR + SWIR)
+
+  NBR_Pre.download("NBR_PRE.tiff")
+  ndwi.download("NDWI.tiff")
+
 
 def post_nbr(connection, extent, start_date, end_date):
     """
@@ -502,33 +491,30 @@ def fire_area_ndvi(connection, extent, start_date, end_date):
     Detects and visualizes fire-affected areas using NDVI (Normalized Difference Vegetation Index) difference.
     Applies median filtering to reduce noise and excludes water bodies using NDWI.
     """
-    ndwi_path = os.path.abspath("NDWI.tiff")
-    
-    if not os.path.exists(ndwi_path):
-        print("NDWI.tiff not found. Generating NDWI...")
 
-        # Load Sentinel-2 data and calculate NDWI
-        s2pre = connection.load_collection(
-            "SENTINEL2_L2A",
-            temporal_extent=[start_date, end_date],
-            spatial_extent=extent,
-            bands=["B03", "B08"],  # Bands needed for NDWI calculation
-            max_cloud_cover=10,
-        )
-        s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
-        green = s2pre_max.band("B03")
-        nir = s2pre_max.band("B08")
-        ndwi = (green - nir) / (green + nir)
-        ndwi.download(ndwi_path)
-        
-        if os.path.exists(ndwi_path):
-            print("NDWI.tiff successfully created.")
-        else:
-            raise FileNotFoundError("Failed to create NDWI.tiff.")
+    # Path to save NDWI.tiff
+    ndwi_path = "NDWI.tiff"
 
-    # Ensure NDVI_PRE and Post_NDVI files exist
-    if not os.path.exists("NDVI_PRE.tiff") or not os.path.exists("Post_NDVI.tiff"):
-        raise FileNotFoundError("NDVI_PRE.tiff or Post_NDVI.tiff is missing. Ensure both files are available.")
+    # Load Sentinel-2 pre-collection
+    s2pre = connection.load_collection(
+        "SENTINEL2_L2A",
+        temporal_extent=[start_date, end_date],
+        spatial_extent=extent,
+        bands=["B03", "B08", "B12"],
+        max_cloud_cover=10,
+    )
+
+    # Reduce the collection to a max composite
+    s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
+
+    # Calculate NDWI (Normalized Difference Water Index)
+    green = s2pre_max.band("B03")  # Green band
+    nir = s2pre_max.band("B08")    # Near Infrared (NIR) band
+    ndwi = (green - nir) / (green + nir)  # NDWI formula: (Green - NIR) / (Green + NIR)
+
+    # Save NDWI to file
+    ndwi.download(ndwi_path)
+
 
     # Set up noise reduction parameters
     kernel_size = 3  # Size of median filter window (3x3 pixels)
@@ -585,7 +571,7 @@ def fire_area_ndvi(connection, extent, start_date, end_date):
     plt.tight_layout()
     plt.show()
 
-    
+
 def severity_ndvi():
     """
     Analyzes and visualizes fire severity using NDVI (Normalized Difference Vegetation Index).
