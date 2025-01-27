@@ -216,11 +216,25 @@ For support or contributions, feel free to contact us.
 
 ---
 
-## 12. Data Privacy Note
+## 12. License
+
+Atash is licensed under the [MIT License](LICENSE). This means:
+
+- **Permission is Granted to:**
+- Use the software for personal, academic, or commercial purposes.
+- Modify and distribute the code under the same license.
+
+- **Limitations:**
+- The software is provided "as is," without warranty of any kind, express or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose, and noninfringement.
+
+For the full license text, see the `LICENSE` file in the repository.
+
+---
+
+## 13. Data Privacy Note
 
 Atash does not store or log user data. Any authentication or API usage is handled securely via OpenEO's OIDC protocol. Ensure you review OpenEO's privacy policy for their data handling practices.
 
 ---
 
 Contributions are welcome! Feel free to open issues or submit pull requests.
-
