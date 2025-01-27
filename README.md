@@ -2,7 +2,7 @@
 
 Atash is an open-source Python library designed for fire detection and burn severity classification using remote sensing data. It integrates with OpenEO to process Sentinel-2 imagery and generates detailed NDVI, NBR, and NDWI maps for analysis.
 
-![multiclass](https://github.com/user-attachments/assets/15399311-edd5-40ef-9383-02121676c56a)
+![image](https://github.com/user-attachments/assets/782b5d71-eb4d-45cb-bd68-5819d28effe0)
 
 
 ## Table of Contents
@@ -54,9 +54,10 @@ To authenticate with OpenEO, you need OIDC credentials.
 atash/
 ├── __init__.py          # Package initialization file
 ├── atash.py             # Library source code for fire detection and classification
+License
 README.md                # Project documentation
+Test.ipynb               # Jupyter notebook for testing and demonstration
 setup.py                 # Script for library installation
-test.ipynb               # Jupyter notebook for testing and demonstration
 
 ```
 
