@@ -206,11 +206,12 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
 
     # Create maximum composite over the time period
     s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
-
     # Calculate NDVI
     ndvi_pre = s2pre_max.ndvi()
     ndvi_pre.download("NDVI_PRE.tiff")
-
+    
+    # Create maximum composite over the time period
+    s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
     # Calculate NDWI (Normalized Difference Water Index) using Green and SWIR bands
     green = s2pre_max.band("B03")  # Green band
     swir = s2pre_max.band("B12")  # SWIR band (B11 preferred over B12 for NDWI)
