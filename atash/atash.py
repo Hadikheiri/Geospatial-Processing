@@ -211,11 +211,12 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
     ndvi_pre = s2pre_max.ndvi()
     ndvi_pre.download("NDVI_PRE.tiff")
     
-    # Calculate NDWI
-    ndwi_pre = s2pre_max.normalized_difference(band1="B03", band2="B08")
-    ndwi_pre.download("NDWI.tiff")
+    # Calculate NDWI (Normalized Difference Water Index)
+    green = s2pre_max.band("B03")  # Green band
+    nir = s2pre_max.band("B08")  # Near Infrared (NIR) band
+    ndwi = (green - nir) / (green + nir)  # NDWI formula: (Green - NIR) / (Green + NIR)
 
-    
+    ndwi.download("NDWI.tiff")
 
 def plot_pre_ndvi():
     """
