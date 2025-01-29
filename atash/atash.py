@@ -186,8 +186,9 @@ def get_start_and_end_dates():
 
 def load_pre_ndvi(connection, extent, start_date, end_date):
     """
-    Load and process pre-event NDVI (Normalized Difference Vegetation Index) data.
-    
+    Load and process pre-event NDVI (Normalized Difference Vegetation Index) 
+    and NDWI (Normalized Difference Water Index) data.
+
     Args:
         connection: OpenEO connection object
         extent: Geographical bounds
@@ -197,24 +198,28 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
     # Load Sentinel-2 L2A collection for pre-event period
     s2pre = connection.load_collection(
         "SENTINEL2_L2A",
-        temporal_extent=["2022-04-01", "2022-08-30"],
+        temporal_extent=[start_date, end_date],
         spatial_extent=extent,
-        bands=["B03","B04", "B08"],  # Bands needed for NDVI calculation
+        bands=["B03", "B08", "B11"],  # Load Green, NIR, and SWIR bands
         max_cloud_cover=10,
     )
 
-    # Create maximum composite over time period
+    # Create maximum composite over the time period
     s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
-    # Calculate NDVI and save to file
+
+    # Calculate NDVI
     ndvi_pre = s2pre_max.ndvi()
     ndvi_pre.download("NDVI_PRE.tiff")
-    # Reduce the collection to a max composite
 
-    # Calculate NDWI (Normalized Difference Water Index)
+    # Calculate NDWI (Normalized Difference Water Index) using Green and SWIR bands
     green = s2pre_max.band("B03")  # Green band
-    nir = s2pre_max.band("B08")  # Near Infrared (NIR) band
-    ndwi = (green - nir) / (green + nir)  # NDWI formula: (Green - NIR) / (Green + NIR)
+    swir = s2pre_max.band("B11")  # SWIR band (B11 preferred over B12 for NDWI)
+
+    ndwi = (green - swir) / (green + swir)  # Apply NDWI formula
+
+    # Download NDWI image
     ndwi.download("NDWI.tiff")
+
 def plot_pre_ndvi():
     """
     Create and display a visualization of pre-event NDVI data.
