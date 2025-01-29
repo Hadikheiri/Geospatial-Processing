@@ -200,7 +200,7 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
         "SENTINEL2_L2A",
         temporal_extent=[start_date, end_date],
         spatial_extent=extent,
-        bands=["B03", "B08", "B11"],  # Load Green, NIR, and SWIR bands
+        bands=["B03", "B04", "B08"],  
         max_cloud_cover=10,
     )
 
@@ -212,7 +212,7 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
     ndvi_pre.download("NDVI_PRE.tiff")
     
     # Calculate NDWI
-    ndwi_pre = s2pre_max.normalized_difference(band1="B03", band2="B11")
+    ndwi_pre = s2pre_max.normalized_difference(band1="B03", band2="B08")
     ndwi_pre.download("NDWI.tiff")
 
     
