@@ -200,7 +200,7 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
         "SENTINEL2_L2A",
         temporal_extent=[start_date, end_date],
         spatial_extent=extent,
-        bands=["B03", "B08", "B11"],  # Load Green, NIR, and SWIR bands
+        bands=["B03", "B08", "B12"],  # Load Green, NIR, and SWIR bands
         max_cloud_cover=10,
     )
 
@@ -213,7 +213,7 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
 
     # Calculate NDWI (Normalized Difference Water Index) using Green and SWIR bands
     green = s2pre_max.band("B03")  # Green band
-    swir = s2pre_max.band("B11")  # SWIR band (B11 preferred over B12 for NDWI)
+    swir = s2pre_max.band("B12")  # SWIR band (B11 preferred over B12 for NDWI)
 
     ndwi = (green - swir) / (green + swir)  # Apply NDWI formula
 
