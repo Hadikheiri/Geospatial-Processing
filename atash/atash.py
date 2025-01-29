@@ -199,7 +199,7 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
         "SENTINEL2_L2A",
         temporal_extent=["2022-04-01", "2022-08-30"],
         spatial_extent=extent,
-        bands=["B04", "B08"],  # Bands needed for NDVI calculation
+        bands=["B03","B04", "B08"],  # Bands needed for NDVI calculation
         max_cloud_cover=10,
     )
 
@@ -208,7 +208,13 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
     # Calculate NDVI and save to file
     ndvi_pre = s2pre_max.ndvi()
     ndvi_pre.download("NDVI_PRE.tiff")
+    # Reduce the collection to a max composite
 
+    # Calculate NDWI (Normalized Difference Water Index)
+    green = s2pre_max.band("B03")  # Green band
+    nir = s2pre_max.band("B08")  # Near Infrared (NIR) band
+    ndwi = (green - nir) / (green + nir)  # NDWI formula: (Green - NIR) / (Green + NIR)
+    ndwi.download("NDWI.tiff")
 def plot_pre_ndvi():
     """
     Create and display a visualization of pre-event NDVI data.
