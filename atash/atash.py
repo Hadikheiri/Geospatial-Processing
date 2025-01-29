@@ -160,7 +160,7 @@ def get_date_input(prompt):
         user_input = input(prompt)
         try:
             # Parse date string to datetime object
-            date = datetime.strptime(user_input, "%Y-%m-d")
+            date = datetime.strptime(user_input, "%Y-%m-%d")
             return date
         except ValueError:
             # Handle invalid date format
@@ -209,7 +209,7 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
 
     # Calculate NDVI
     ndvi_pre = s2pre_max.ndvi()
-    ndvi_pre.download("NDVI_PRE2.tiff")
+    ndvi_pre.download("NDVI_PRE.tiff")
 
     # Calculate NDWI (Normalized Difference Water Index) using Green and SWIR bands
     green = s2pre_max.band("B03")  # Green band
