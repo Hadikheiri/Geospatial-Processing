@@ -208,7 +208,7 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
     s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
     # Calculate NDVI
     ndvi_pre = s2pre_max.ndvi()
-    ndvi_pre.download("NDVI_PRE.tiff")
+    ndvi_pre.download("NDVI_PRE2.tiff")
     
     # Create maximum composite over the time period
     s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
