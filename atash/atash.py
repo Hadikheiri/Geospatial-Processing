@@ -198,17 +198,23 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
     # Load Sentinel-2 L2A collection for pre-event period
     s2pre = connection.load_collection(
         "SENTINEL2_L2A",
-        temporal_extent=["2022-04-01", "2022-08-30"],
+        temporal_extent=[start_date, end_date],
         spatial_extent=extent,
-        bands=["B03", "B08"],  # Load Green, NIR, and SWIR bands
+        bands=["B03", "B08", "B11"],  # Load Green, NIR, and SWIR bands
         max_cloud_cover=10,
     )
 
     # Create maximum composite over the time period
     s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
+    
     # Calculate NDVI
     ndvi_pre = s2pre_max.ndvi()
     ndvi_pre.download("NDVI_PRE.tiff")
+    
+    # Calculate NDWI
+    ndwi_pre = s2pre_max.normalized_difference(band1="B03", band2="B11")
+    ndwi_pre.download("NDWI.tiff")
+
     
 
 def plot_pre_ndvi():
