@@ -107,6 +107,8 @@ load_post_ndvi(connection, extent, start_date, end_date)
 # Step 5: Analyze fire impact
 fire_detector_ndvi()
 severity_ndvi()
+fire_severity_multiclass()
+severity_kmeans()
 ```
 
 ---
