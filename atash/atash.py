@@ -210,11 +210,29 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
     # Calculate NDVI
     ndvi_pre = s2pre_max.ndvi()
     ndvi_pre.download("NDVI_PRE.tiff")
-    
+
+    #----------------------------------------------------------------------------
+    # Load Sentinel-2 pre-collection
+    s2pre = connection.load_collection(
+        "SENTINEL2_L2A",
+        temporal_extent=["2022-04-01", "2022-08-30"],
+        spatial_extent=extent,
+        bands=["B03","B08","B12"],
+        max_cloud_cover=10,
+    )
+
+    # Reduce the collection to a max composite
+    s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
+
+
     # Calculate NDWI (Normalized Difference Water Index)
     green = s2pre_max.band("B03")  # Green band
     nir = s2pre_max.band("B08")  # Near Infrared (NIR) band
     ndwi = (green - nir) / (green + nir)  # NDWI formula: (Green - NIR) / (Green + NIR)
+
+    # Apply a threshold to detect water areas (NDWI > 0.2 indicates water)
+    threshold = 0.0
+    water_mask = ndwi > threshold  # Mask for water areas where NDWI > 0.2
 
     ndwi.download("NDWI.tiff")
 
