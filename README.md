@@ -98,8 +98,11 @@ map_interface = load_map()
 start_date, end_date = get_start_and_end_dates()
 
 # Step 4: Process pre/post-event data
+load_pre_nbr(connection, extent, start_date, end_date)
 load_pre_ndvi(connection, extent, start_date, end_date)
+post_nbr(connection, extent, start_date, end_date)
 load_post_ndvi(connection, extent, start_date, end_date)
+
 
 # Step 5: Analyze fire impact
 fire_detector_ndvi()
