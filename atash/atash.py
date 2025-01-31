@@ -160,7 +160,7 @@ def get_date_input(prompt):
         user_input = input(prompt)
         try:
             # Parse date string to datetime object
-            date = datetime.strptime(user_input, "%Y-%m-d")
+            date = datetime.strptime(user_input, "%Y-%m-%d")
             return date
         except ValueError:
             # Handle invalid date format
@@ -186,8 +186,9 @@ def get_start_and_end_dates():
 
 def load_pre_ndvi(connection, extent, start_date, end_date):
     """
-    Load and process pre-event NDVI (Normalized Difference Vegetation Index) data.
-    
+    Load and process pre-event NDVI (Normalized Difference Vegetation Index) 
+    and NDWI (Normalized Difference Water Index) data.
+
     Args:
         connection: OpenEO connection object
         extent: Geographical bounds
@@ -197,17 +198,19 @@ def load_pre_ndvi(connection, extent, start_date, end_date):
     # Load Sentinel-2 L2A collection for pre-event period
     s2pre = connection.load_collection(
         "SENTINEL2_L2A",
-        temporal_extent=["2022-04-01", "2022-08-30"],
+        temporal_extent=[start_date, end_date],
         spatial_extent=extent,
-        bands=["B04", "B08"],  # Bands needed for NDVI calculation
+        bands=["B03", "B04", "B08"],  
         max_cloud_cover=10,
     )
 
-    # Create maximum composite over time period
+    # Create maximum composite over the time period
     s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
-    # Calculate NDVI and save to file
+    
+    # Calculate NDVI
     ndvi_pre = s2pre_max.ndvi()
     ndvi_pre.download("NDVI_PRE.tiff")
+
 
 def plot_pre_ndvi():
     """
@@ -479,43 +482,12 @@ def fire_area_nbr():
     plt.tight_layout()
     plt.show()
 
-import os
-import rasterio
-from scipy.ndimage import median_filter
-import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import matplotlib.colors as mcolors
 
 def fire_area_ndvi(connection, extent, start_date, end_date):
     """
     Detects and visualizes fire-affected areas using NDVI (Normalized Difference Vegetation Index) difference.
     Applies median filtering to reduce noise and excludes water bodies using NDWI.
     """
-
-    # Path to save NDWI.tiff
-    ndwi_path = "NDWI.tiff"
-
-    # Load Sentinel-2 pre-collection
-    s2pre = connection.load_collection(
-        "SENTINEL2_L2A",
-        temporal_extent=[start_date, end_date],
-        spatial_extent=extent,
-        bands=["B03", "B08", "B12"],
-        max_cloud_cover=10,
-    )
-
-    # Reduce the collection to a max composite
-    s2pre_max = s2pre.reduce_dimension(dimension="t", reducer="max")
-
-    # Calculate NDWI (Normalized Difference Water Index)
-    green = s2pre_max.band("B03")  # Green band
-    nir = s2pre_max.band("B08")    # Near Infrared (NIR) band
-    ndwi = (green - nir) / (green + nir)  # NDWI formula: (Green - NIR) / (Green + NIR)
-
-    # Save NDWI to file
-    ndwi.download(ndwi_path)
-
-
     # Set up noise reduction parameters
     kernel_size = 3  # Size of median filter window (3x3 pixels)
     iterations = 1   # Number of filtering passes
@@ -523,7 +495,7 @@ def fire_area_ndvi(connection, extent, start_date, end_date):
     # Load all required raster data using context managers
     with rasterio.open("NDVI_PRE.tiff") as src_pre, \
          rasterio.open("Post_NDVI.tiff") as src_post, \
-         rasterio.open(ndwi_path) as src_ndwi:
+         rasterio.open("NDWI.tiff") as src_ndwi:
 
         # Read raster data into numpy arrays
         ndvi_pre = src_pre.read(1)   # Pre-fire NDVI
